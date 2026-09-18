@@ -28,7 +28,7 @@ const starters = [
   "Tips for better sleep as a student",
 ];
 
-function answer(q: string, ctx: { bmi: number; systolic: number; diastolic: number; heart?: number }): string {
+function answer(q: string, ctx: { bmi: number; systolic: number; diastolic: number; heart?: number | undefined }): string {
   const t = q.toLowerCase();
   if (t.includes("bmi"))
     return `Your BMI is about **${ctx.bmi.toFixed(1)}**. BMI compares weight to height: under 18.5 is underweight, 18.5-24.9 healthy, 25-29.9 overweight and 30+ obese. It's a rough screening number — it can't tell muscle from fat, so read it alongside waist size and activity.`;

@@ -10,9 +10,12 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AssistantRouteImport } from './routes/assistant'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as DoctorsRouteImport } from './routes/doctors'
 import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as TrackerRouteImport } from './routes/tracker'
 import { Route as RiskIndexRouteImport } from './routes/risk.index'
 import { Route as RiskDiabetesRouteImport } from './routes/risk.diabetes'
 import { Route as RiskHeartRouteImport } from './routes/risk.heart'
@@ -20,6 +23,11 @@ import { Route as RiskHeartRouteImport } from './routes/risk.heart'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AssistantRoute = AssistantRouteImport.update({
+  id: '/assistant',
+  path: '/assistant',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -32,9 +40,19 @@ const DashboardRoute = DashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DoctorsRoute = DoctorsRouteImport.update({
+  id: '/doctors',
+  path: '/doctors',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TrackerRoute = TrackerRouteImport.update({
+  id: '/tracker',
+  path: '/tracker',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RiskIndexRoute = RiskIndexRouteImport.update({
@@ -55,18 +73,24 @@ const RiskHeartRoute = RiskHeartRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/assistant': typeof AssistantRoute
   '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRoute
+  '/doctors': typeof DoctorsRoute
   '/profile': typeof ProfileRoute
+  '/tracker': typeof TrackerRoute
   '/risk/diabetes': typeof RiskDiabetesRoute
   '/risk/heart': typeof RiskHeartRoute
   '/risk/': typeof RiskIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/assistant': typeof AssistantRoute
   '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRoute
+  '/doctors': typeof DoctorsRoute
   '/profile': typeof ProfileRoute
+  '/tracker': typeof TrackerRoute
   '/risk/diabetes': typeof RiskDiabetesRoute
   '/risk/heart': typeof RiskHeartRoute
   '/risk': typeof RiskIndexRoute
@@ -74,9 +98,12 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/assistant': typeof AssistantRoute
   '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRoute
+  '/doctors': typeof DoctorsRoute
   '/profile': typeof ProfileRoute
+  '/tracker': typeof TrackerRoute
   '/risk/diabetes': typeof RiskDiabetesRoute
   '/risk/heart': typeof RiskHeartRoute
   '/risk/': typeof RiskIndexRoute
@@ -85,27 +112,36 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/assistant'
     | '/auth'
     | '/dashboard'
+    | '/doctors'
     | '/profile'
+    | '/tracker'
     | '/risk/diabetes'
     | '/risk/heart'
     | '/risk/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/assistant'
     | '/auth'
     | '/dashboard'
+    | '/doctors'
     | '/profile'
+    | '/tracker'
     | '/risk/diabetes'
     | '/risk/heart'
     | '/risk'
   id:
     | '__root__'
     | '/'
+    | '/assistant'
     | '/auth'
     | '/dashboard'
+    | '/doctors'
     | '/profile'
+    | '/tracker'
     | '/risk/diabetes'
     | '/risk/heart'
     | '/risk/'
@@ -113,9 +149,12 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AssistantRoute: typeof AssistantRoute
   AuthRoute: typeof AuthRoute
   DashboardRoute: typeof DashboardRoute
+  DoctorsRoute: typeof DoctorsRoute
   ProfileRoute: typeof ProfileRoute
+  TrackerRoute: typeof TrackerRoute
   RiskDiabetesRoute: typeof RiskDiabetesRoute
   RiskHeartRoute: typeof RiskHeartRoute
   RiskIndexRoute: typeof RiskIndexRoute
@@ -128,6 +167,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/assistant': {
+      id: '/assistant'
+      path: '/assistant'
+      fullPath: '/assistant'
+      preLoaderRoute: typeof AssistantRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -144,11 +190,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/doctors': {
+      id: '/doctors'
+      path: '/doctors'
+      fullPath: '/doctors'
+      preLoaderRoute: typeof DoctorsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/profile': {
       id: '/profile'
       path: '/profile'
       fullPath: '/profile'
       preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tracker': {
+      id: '/tracker'
+      path: '/tracker'
+      fullPath: '/tracker'
+      preLoaderRoute: typeof TrackerRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/risk/': {
@@ -177,9 +237,12 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AssistantRoute: AssistantRoute,
   AuthRoute: AuthRoute,
   DashboardRoute: DashboardRoute,
+  DoctorsRoute: DoctorsRoute,
   ProfileRoute: ProfileRoute,
+  TrackerRoute: TrackerRoute,
   RiskDiabetesRoute: RiskDiabetesRoute,
   RiskHeartRoute: RiskHeartRoute,
   RiskIndexRoute: RiskIndexRoute,
