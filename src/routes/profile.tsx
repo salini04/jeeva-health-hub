@@ -62,7 +62,10 @@ function ProfilePage() {
     if (form.systolic < 70 || form.systolic > 250) next["systolic"] = "Systolic should be 70-250";
     if (form.diastolic < 40 || form.diastolic > 150) next["diastolic"] = "Diastolic should be 40-150";
     setErrors(next);
-    if (Object.keys(next).length) return toast.error("Please fix the highlighted fields");
+    if (Object.keys(next).length) {
+      toast.error("Please fix the highlighted fields");
+      return;
+    }
     update({ profile: form });
     toast.success("Health profile saved");
   };
