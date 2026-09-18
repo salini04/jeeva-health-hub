@@ -13,6 +13,9 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as RiskIndexRouteImport } from './routes/risk.index'
+import { Route as RiskDiabetesRouteImport } from './routes/risk.diabetes'
+import { Route as RiskHeartRouteImport } from './routes/risk.heart'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -34,18 +37,39 @@ const ProfileRoute = ProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RiskIndexRoute = RiskIndexRouteImport.update({
+  id: '/risk/',
+  path: '/risk/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RiskDiabetesRoute = RiskDiabetesRouteImport.update({
+  id: '/risk/diabetes',
+  path: '/risk/diabetes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RiskHeartRoute = RiskHeartRouteImport.update({
+  id: '/risk/heart',
+  path: '/risk/heart',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRoute
   '/profile': typeof ProfileRoute
+  '/risk/diabetes': typeof RiskDiabetesRoute
+  '/risk/heart': typeof RiskHeartRoute
+  '/risk/': typeof RiskIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRoute
   '/profile': typeof ProfileRoute
+  '/risk/diabetes': typeof RiskDiabetesRoute
+  '/risk/heart': typeof RiskHeartRoute
+  '/risk': typeof RiskIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -53,13 +77,38 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRoute
   '/profile': typeof ProfileRoute
+  '/risk/diabetes': typeof RiskDiabetesRoute
+  '/risk/heart': typeof RiskHeartRoute
+  '/risk/': typeof RiskIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/dashboard' | '/profile'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/dashboard'
+    | '/profile'
+    | '/risk/diabetes'
+    | '/risk/heart'
+    | '/risk/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/dashboard' | '/profile'
-  id: '__root__' | '/' | '/auth' | '/dashboard' | '/profile'
+  to:
+    | '/'
+    | '/auth'
+    | '/dashboard'
+    | '/profile'
+    | '/risk/diabetes'
+    | '/risk/heart'
+    | '/risk'
+  id:
+    | '__root__'
+    | '/'
+    | '/auth'
+    | '/dashboard'
+    | '/profile'
+    | '/risk/diabetes'
+    | '/risk/heart'
+    | '/risk/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -67,6 +116,9 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   DashboardRoute: typeof DashboardRoute
   ProfileRoute: typeof ProfileRoute
+  RiskDiabetesRoute: typeof RiskDiabetesRoute
+  RiskHeartRoute: typeof RiskHeartRoute
+  RiskIndexRoute: typeof RiskIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -99,6 +151,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/risk/': {
+      id: '/risk/'
+      path: '/risk'
+      fullPath: '/risk/'
+      preLoaderRoute: typeof RiskIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/risk/diabetes': {
+      id: '/risk/diabetes'
+      path: '/risk/diabetes'
+      fullPath: '/risk/diabetes'
+      preLoaderRoute: typeof RiskDiabetesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/risk/heart': {
+      id: '/risk/heart'
+      path: '/risk/heart'
+      fullPath: '/risk/heart'
+      preLoaderRoute: typeof RiskHeartRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -107,6 +180,9 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   DashboardRoute: DashboardRoute,
   ProfileRoute: ProfileRoute,
+  RiskDiabetesRoute: RiskDiabetesRoute,
+  RiskHeartRoute: RiskHeartRoute,
+  RiskIndexRoute: RiskIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
