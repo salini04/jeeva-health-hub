@@ -14,7 +14,362 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      appointments: {
+        Row: {
+          appointment_date: string
+          created_at: string
+          doctor_id: string
+          id: string
+          mode: string
+          reason: string
+          status: string
+          time_slot: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          appointment_date: string
+          created_at?: string
+          doctor_id: string
+          id?: string
+          mode?: string
+          reason: string
+          status?: string
+          time_slot: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          appointment_date?: string
+          created_at?: string
+          doctor_id?: string
+          id?: string
+          mode?: string
+          reason?: string
+          status?: string
+          time_slot?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "appointments_doctor_id_fkey"
+            columns: ["doctor_id"]
+            isOneToOne: false
+            referencedRelation: "doctors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "appointments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      doctors: {
+        Row: {
+          about: string
+          availability_schedule: Json
+          avatar_url: string | null
+          consultation_fee: number
+          created_at: string
+          experience_years: number
+          hospital: string
+          id: string
+          languages: string[]
+          location: string
+          name: string
+          qualification: string
+          rating: number
+          specialty: string
+          updated_at: string
+        }
+        Insert: {
+          about?: string
+          availability_schedule?: Json
+          avatar_url?: string | null
+          consultation_fee?: number
+          created_at?: string
+          experience_years?: number
+          hospital?: string
+          id?: string
+          languages?: string[]
+          location: string
+          name: string
+          qualification: string
+          rating?: number
+          specialty: string
+          updated_at?: string
+        }
+        Update: {
+          about?: string
+          availability_schedule?: Json
+          avatar_url?: string | null
+          consultation_fee?: number
+          created_at?: string
+          experience_years?: number
+          hospital?: string
+          id?: string
+          languages?: string[]
+          location?: string
+          name?: string
+          qualification?: string
+          rating?: number
+          specialty?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      health_metrics: {
+        Row: {
+          created_at: string
+          entry_id: string
+          id: string
+          metric_type: string
+          notes: string
+          recorded_at: string
+          steps: number
+          unit: string
+          user_id: string
+          value: number
+        }
+        Insert: {
+          created_at?: string
+          entry_id?: string
+          id?: string
+          metric_type: string
+          notes?: string
+          recorded_at?: string
+          steps?: number
+          unit: string
+          user_id: string
+          value: number
+        }
+        Update: {
+          created_at?: string
+          entry_id?: string
+          id?: string
+          metric_type?: string
+          notes?: string
+          recorded_at?: string
+          steps?: number
+          unit?: string
+          user_id?: string
+          value?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "health_metrics_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      health_reports: {
+        Row: {
+          created_at: string
+          id: string
+          report_data: Json
+          summary: string
+          title: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          report_data?: Json
+          summary?: string
+          title: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          report_data?: Json
+          summary?: string
+          title?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "health_reports_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      notifications: {
+        Row: {
+          created_at: string
+          id: string
+          is_read: boolean
+          message: string
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          message: string
+          title: string
+          type?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          message?: string
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          activity_level: string
+          age: number
+          alcohol_consumption: string
+          allergies: string
+          blood_group: string
+          blood_pressure: Json
+          cholesterol: number
+          created_at: string
+          email: string
+          emergency_contact: string
+          fasting_glucose: number
+          full_name: string
+          gender: string
+          hba1c: number
+          height: number
+          medical_history: string
+          preferences: Json
+          resting_heart_rate: number
+          smoking_status: boolean
+          updated_at: string
+          user_id: string
+          waist_cm: number
+          weight: number
+        }
+        Insert: {
+          activity_level?: string
+          age?: number
+          alcohol_consumption?: string
+          allergies?: string
+          blood_group?: string
+          blood_pressure?: Json
+          cholesterol?: number
+          created_at?: string
+          email?: string
+          emergency_contact?: string
+          fasting_glucose?: number
+          full_name?: string
+          gender?: string
+          hba1c?: number
+          height?: number
+          medical_history?: string
+          preferences?: Json
+          resting_heart_rate?: number
+          smoking_status?: boolean
+          updated_at?: string
+          user_id: string
+          waist_cm?: number
+          weight?: number
+        }
+        Update: {
+          activity_level?: string
+          age?: number
+          alcohol_consumption?: string
+          allergies?: string
+          blood_group?: string
+          blood_pressure?: Json
+          cholesterol?: number
+          created_at?: string
+          email?: string
+          emergency_contact?: string
+          fasting_glucose?: number
+          full_name?: string
+          gender?: string
+          hba1c?: number
+          height?: number
+          medical_history?: string
+          preferences?: Json
+          resting_heart_rate?: number
+          smoking_status?: boolean
+          updated_at?: string
+          user_id?: string
+          waist_cm?: number
+          weight?: number
+        }
+        Relationships: []
+      }
+      risk_assessments: {
+        Row: {
+          assessed_at: string
+          assessment_type: string
+          consult_advisory: string
+          contributing_factors: Json
+          id: string
+          input_parameters: Json
+          model: string
+          recommendations: string[]
+          risk_score: number
+          risk_tier: string
+          user_id: string
+        }
+        Insert: {
+          assessed_at?: string
+          assessment_type: string
+          consult_advisory?: string
+          contributing_factors?: Json
+          id?: string
+          input_parameters?: Json
+          model?: string
+          recommendations?: string[]
+          risk_score: number
+          risk_tier: string
+          user_id: string
+        }
+        Update: {
+          assessed_at?: string
+          assessment_type?: string
+          consult_advisory?: string
+          contributing_factors?: Json
+          id?: string
+          input_parameters?: Json
+          model?: string
+          recommendations?: string[]
+          risk_score?: number
+          risk_tier?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "risk_assessments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
