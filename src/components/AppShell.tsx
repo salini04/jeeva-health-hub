@@ -82,10 +82,10 @@ export function AppShell({
   children: React.ReactNode;
   actions?: React.ReactNode;
 }) {
-  const { settings, update, profile, auth } = useApp();
+  const { settings, update, profile, auth, loading, saving, loadError, retry, signOut } = useApp();
   const [open, setOpen] = React.useState(false);
   const dark = settings.theme === "dark";
-  const displayName = auth.guest ? "Guest user" : auth.name || profile.name;
+  const displayName = !auth.signedIn ? "Guest user" : auth.name || profile.name;
 
   return (
     <div className="min-h-screen bg-background">
@@ -98,7 +98,7 @@ export function AppShell({
         </div>
         <div className="border-t border-sidebar-border p-4 text-xs text-muted-foreground">
           <p className="font-medium text-foreground">{displayName}</p>
-          <p>{auth.guest ? "Demo mode" : profile.email}</p>
+          <p>{!auth.signedIn ? "Demo mode" : auth.email}</p>
         </div>
       </aside>
 
@@ -125,6 +125,7 @@ export function AppShell({
 
           <div className="flex items-center gap-2">
             {actions}
+            {auth.signedIn ? <Button size="sm" variant="ghost" onClick={signOut}>Sign out</Button> : <Button size="sm" variant="ghost" asChild><Link to="/auth">Sign in</Link></Button>}
             <Button
               variant="outline"
               size="icon"
@@ -138,7 +139,7 @@ export function AppShell({
 
         <main className="mx-auto w-full max-w-7xl space-y-6 p-4 md:p-6">
           <Disclaimer compact />
-          {children}
+          {loading ? <p role="status" className="text-sm text-muted-foreground">Loading your records…</p> : loadError ? <div role="alert"><p>{loadError}</p><Button onClick={retry}>Try again</Button></div> : <fieldset disabled={saving} className="min-w-0 space-y-6 border-0 p-0">{children}</fieldset>}
         </main>
       </div>
     </div>

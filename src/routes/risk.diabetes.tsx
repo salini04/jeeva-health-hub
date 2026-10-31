@@ -14,6 +14,8 @@ import { bmiFrom, predictDiabetesRisk, type DiabetesRiskInput } from "@/services
 export const Route = createFileRoute("/risk/diabetes")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Type-2 diabetes risk — Jeeva" },
       { name: "description", content: "Educational type-2 diabetes risk screening using BMI, glucose, HbA1c, waist size and habits." },
       { property: "og:title", content: "Type-2 diabetes risk — Jeeva" },
@@ -24,7 +26,7 @@ export const Route = createFileRoute("/risk/diabetes")({
 });
 
 function DiabetesRisk() {
-  const { profile, risks, update } = useApp();
+  const { profile, risks, recordAssessment, saving } = useApp();
   const [form, setForm] = React.useState<DiabetesRiskInput>({
     age: profile.age,
     gender: profile.gender,
@@ -42,7 +44,7 @@ function DiabetesRisk() {
 
   const set = <K extends keyof DiabetesRiskInput>(k: K, v: DiabetesRiskInput[K]) => setForm((f) => ({ ...f, [k]: v }));
 
-  const run = (e: React.FormEvent) => {
+  const run = async (e: React.FormEvent) => {
     e.preventDefault();
     if (form.age < 1 || form.bmi <= 0 || form.hba1c <= 0) {
       setError("Please check age, BMI and HbA1c — some values look out of range.");
@@ -51,7 +53,7 @@ function DiabetesRisk() {
     setError("");
     // Swap this call for the FastAPI ML endpoint when it is available.
     const res = predictDiabetesRisk(form);
-    update({ risks: { ...risks, diabetes: res } });
+    if (!await recordAssessment("diabetes", res, form)) return;
     toast.success(`Diabetes risk assessed: ${res.tier} tier`);
   };
 
@@ -114,7 +116,7 @@ function DiabetesRisk() {
             </div>
           </div>
           {error && <p className="text-sm text-destructive">{error}</p>}
-          <Button type="submit" className="w-full">Calculate diabetes risk</Button>
+          <Button disabled={saving} type="submit" className="w-full">Calculate diabetes risk</Button>
         </form>
 
         <div>

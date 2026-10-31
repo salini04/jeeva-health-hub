@@ -8,6 +8,8 @@ import { useApp } from "@/lib/store";
 export const Route = createFileRoute("/risk/")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Risk assessment — Jeeva" },
       { name: "description", content: "Educational heart disease and type-2 diabetes risk screening with factor breakdowns." },
       { property: "og:title", content: "Risk assessment — Jeeva" },

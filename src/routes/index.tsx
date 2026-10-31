@@ -23,6 +23,8 @@ import { useApp } from "@/lib/store";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Jeeva — Your Health. Smarter Insights." },
       {
         name: "description",
@@ -57,13 +59,13 @@ const steps = [
 const faqs = [
   { q: "Is Jeeva a medical diagnosis tool?", a: "No. Jeeva provides educational risk estimates and health tracking. Only a qualified clinician can diagnose or treat a condition." },
   { q: "How are risk scores calculated?", a: "Scores come from a transparent scoring service using well-known clinical risk factors such as age, blood pressure, BMI, glucose and lifestyle habits. The service layer is ready to be swapped for a trained ML model." },
-  { q: "Do I need an account?", a: "No. You can explore everything with demo guest access; your data stays in this browser." },
+  { q: "Do I need an account?", a: "Explore without an account using guest demo data. Sign in to save your own private health records." },
   { q: "Who is Jeeva for?", a: "Students and general users who want to understand their health numbers and build better daily habits." },
-  { q: "Is my data shared?", a: "Demo data is stored locally in your browser and is never sent anywhere." },
+  { q: "Is my data shared?", a: "Guest demo changes stay in this browser. Signed-in health records are stored privately in Lovable Cloud and accessible only to your account." },
 ];
 
 function Landing() {
-  const { settings, update } = useApp();
+  const { settings, update, auth, signOut } = useApp();
   const dark = settings.theme === "dark";
 
   return (
@@ -81,8 +83,9 @@ function Landing() {
               {dark ? <Sun className="size-4" /> : <Moon className="size-4" />}
             </Button>
             <Button variant="ghost" asChild className="hidden sm:inline-flex">
-              <Link to="/auth">Sign in</Link>
+              <Link to={auth.signedIn ? "/settings" : "/auth"}>{auth.signedIn ? "Account" : "Sign in"}</Link>
             </Button>
+            {auth.signedIn && <Button variant="ghost" onClick={signOut}>Sign out</Button>}
             <Button asChild>
               <Link to="/dashboard">Explore dashboard</Link>
             </Button>

@@ -14,6 +14,8 @@ import { bmiFrom, predictHeartRisk, type HeartRiskInput } from "@/services/mlSer
 export const Route = createFileRoute("/risk/heart")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Heart disease risk — Jeeva" },
       { name: "description", content: "Educational heart disease risk screening using blood pressure, cholesterol, BMI, smoking and activity." },
       { property: "og:title", content: "Heart disease risk — Jeeva" },
@@ -24,7 +26,7 @@ export const Route = createFileRoute("/risk/heart")({
 });
 
 function HeartRisk() {
-  const { profile, risks, update } = useApp();
+  const { profile, risks, recordAssessment, saving } = useApp();
   const [form, setForm] = React.useState<HeartRiskInput>({
     age: profile.age,
     gender: profile.gender,
@@ -44,7 +46,7 @@ function HeartRisk() {
 
   const set = <K extends keyof HeartRiskInput>(k: K, v: HeartRiskInput[K]) => setForm((f) => ({ ...f, [k]: v }));
 
-  const run = (e: React.FormEvent) => {
+  const run = async (e: React.FormEvent) => {
     e.preventDefault();
     if (form.age < 1 || form.systolic < 70 || form.bmi <= 0) {
       setError("Please check age, blood pressure and BMI — some values look out of range.");
@@ -53,7 +55,7 @@ function HeartRisk() {
     setError("");
     // Swap this call for the FastAPI ML endpoint when it is available.
     const res = predictHeartRisk(form);
-    update({ risks: { ...risks, heart: res } });
+    if (!await recordAssessment("heart", res, form)) return;
     toast.success(`Heart risk assessed: ${res.tier} tier`);
   };
 
@@ -116,7 +118,7 @@ function HeartRisk() {
             {toggle("familyHistory", "Family history", "Parent or sibling with heart disease")}
           </div>
           {error && <p className="text-sm text-destructive">{error}</p>}
-          <Button type="submit" className="w-full">Calculate heart risk</Button>
+          <Button disabled={saving} type="submit" className="w-full">Calculate heart risk</Button>
         </form>
 
         <div>

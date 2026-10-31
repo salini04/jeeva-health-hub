@@ -36,6 +36,8 @@ import { bmiCategory, bmiFrom } from "@/services/mlService";
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Dashboard — Jeeva" },
       { name: "description", content: "Your personalised health dashboard: BMI, vitals, risk summaries, trends and reminders." },
       { property: "og:title", content: "Dashboard — Jeeva" },
@@ -49,13 +51,15 @@ const fmt = (d: string) => new Date(d).toLocaleDateString(undefined, { month: "s
 
 function Dashboard() {
   const { profile, vitals, appointments, notifications, risks, auth } = useApp();
-  const latest = vitals[vitals.length - 1]!;
+  const latest = vitals[vitals.length - 1];
   const recent = vitals.slice(-14).map((v) => ({ ...v, label: fmt(v.date) }));
-  const bmi = bmiFrom(profile.heightCm, latest.weightKg);
+  const bmi = bmiFrom(profile.heightCm, (latest?.weightKg ?? profile.weightKg));
   const cat = bmiCategory(bmi);
   const upcoming = appointments.filter((a) => a.status === "upcoming");
   const unread = notifications.filter((n) => !n.read);
   const firstName = (auth.guest ? "there" : auth.name || profile.name).split(" ")[0];
+
+  if (!latest) return <AppShell title="Your health dashboard"><p className="text-muted-foreground">No vitals recorded yet.</p><Button asChild><Link to="/profile">Complete health profile</Link></Button><Button asChild variant="outline"><Link to="/tracker">Log first vitals</Link></Button></AppShell>;
 
   return (
     <AppShell

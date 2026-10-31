@@ -6,29 +6,32 @@ import { BookingDialog } from "@/components/BookingDialog";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { demoDoctors } from "@/lib/demoData";
+import { useApp } from "@/lib/store";
 
 export const Route = createFileRoute("/doctors")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Find doctors — Jeeva" },
       { name: "description", content: "Search doctors by specialty and city, view their profiles and book an appointment." },
       { property: "og:title", content: "Find doctors — Jeeva" },
-      { property: "og:description", content: "Browse verified specialists and book in-person or video consultations." },
+      { property: "og:description", content: "Browse example specialists and book in-person or video consultations." },
     ],
   }),
   component: Doctors,
 });
 
 function Doctors() {
+  const { doctors } = useApp();
   const [q, setQ] = React.useState("");
   const [specialty, setSpecialty] = React.useState("all");
   const [location, setLocation] = React.useState("all");
 
-  const specialties = ["all", ...new Set(demoDoctors.map((d) => d.specialty))];
-  const locations = ["all", ...new Set(demoDoctors.map((d) => d.location))];
+  const specialties = ["all", ...new Set(doctors.map((d) => d.specialty))];
+  const locations = ["all", ...new Set(doctors.map((d) => d.location))];
 
-  const list = demoDoctors.filter(
+  const list = doctors.filter(
     (d) =>
       (specialty === "all" || d.specialty === specialty) &&
       (location === "all" || d.location === location) &&
@@ -38,7 +41,7 @@ function Doctors() {
   );
 
   return (
-    <AppShell title="Find doctors" description="Filter by specialty and city, then book a slot.">
+    <AppShell title="Find doctors" description="Example directory · bookings are saved in Jeeva, not sent to clinics.">
       <div className="card-soft grid gap-3 p-4 md:grid-cols-[1fr_200px_200px]">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />

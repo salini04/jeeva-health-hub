@@ -13,6 +13,8 @@ import type { VitalsLog } from "@/lib/types";
 export const Route = createFileRoute("/tracker")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Health tracker — Jeeva" },
       { name: "description", content: "Log weight, blood pressure, glucose, heart rate, water, sleep and activity with 7-day, 30-day and 6-month charts." },
       { property: "og:title", content: "Health tracker — Jeeva" },
@@ -36,8 +38,8 @@ const metrics = [
 type MetricKey = (typeof metrics)[number]["key"];
 
 function Tracker() {
-  const { vitals, update } = useApp();
-  const last = vitals[vitals.length - 1]!;
+  const { vitals, update, saving } = useApp();
+  const last = vitals[vitals.length - 1] ?? { weightKg: 0, systolic: 0, diastolic: 0, glucose: 0, heartRate: 0, waterLitres: 0, sleepHours: 0, activityMinutes: 0, steps: 0 };
   const [range, setRange] = React.useState<"7" | "30" | "180">("30");
   const [metric, setMetric] = React.useState<MetricKey>("weightKg");
   const [form, setForm] = React.useState({
@@ -58,13 +60,13 @@ function Tracker() {
   }));
 
   const avg = (k: MetricKey) => (data.reduce((s, d) => s + Number(d[k]), 0) / (data.length || 1)).toFixed(1);
-  const min = Math.min(...data.map((d) => Number(d[metric])));
-  const max = Math.max(...data.map((d) => Number(d[metric])));
+  const min = data.length ? Math.min(...data.map((d) => Number(d[metric]))) : "—";
+  const max = data.length ? Math.max(...data.map((d) => Number(d[metric]))) : "—";
 
-  const save = (e: React.FormEvent) => {
+  const save = async (e: React.FormEvent) => {
     e.preventDefault();
     const entry: VitalsLog = { id: uid(), date: new Date().toISOString(), ...form };
-    update({ vitals: [...vitals, entry] });
+    if (!await update({ vitals: [...vitals, entry] })) return;
     toast.success("Today's vitals logged");
   };
 
@@ -87,7 +89,7 @@ function Tracker() {
               </div>
             ))}
           </div>
-          <Button type="submit" className="w-full">Save entry</Button>
+          <Button disabled={saving} type="submit" className="w-full">Save entry</Button>
         </form>
 
         <div className="space-y-4">

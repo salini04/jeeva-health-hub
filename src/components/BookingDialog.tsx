@@ -18,17 +18,17 @@ import { uid, useApp } from "@/lib/store";
 import type { Appointment, Doctor } from "@/lib/types";
 
 export function BookingDialog({ doctor }: { doctor: Doctor }) {
-  const { appointments, update } = useApp();
+  const { appointments, update, saving } = useApp();
   const [open, setOpen] = React.useState(false);
   const today = new Date().toISOString().slice(0, 10);
   const [date, setDate] = React.useState(today);
-  const [time, setTime] = React.useState(doctor.slots[0]!);
+  const [time, setTime] = React.useState(doctor.slots[0] ?? "");
   const [mode, setMode] = React.useState<Appointment["mode"]>("In-person");
   const [reason, setReason] = React.useState("");
   const [error, setError] = React.useState("");
 
-  const book = () => {
-    if (date < today) return setError("Please pick today or a future date.");
+  const book = async () => {
+    if (!date || !time || date < today) return setError("Please pick today or a future date.");
     if (reason.trim().length < 5) return setError("Tell the doctor briefly why you're visiting (5+ characters).");
     setError("");
     const appt: Appointment = {
@@ -42,7 +42,7 @@ export function BookingDialog({ doctor }: { doctor: Doctor }) {
       status: "upcoming",
       mode,
     };
-    update({ appointments: [appt, ...appointments] });
+    if (!await update({ appointments: [appt, ...appointments] })) return;
     setOpen(false);
     setReason("");
     toast.success(`Appointment booked with ${doctor.name}`);
@@ -89,7 +89,7 @@ export function BookingDialog({ doctor }: { doctor: Doctor }) {
           {error && <p className="text-sm text-destructive">{error}</p>}
         </div>
         <DialogFooter>
-          <Button onClick={book}>Confirm booking</Button>
+          <Button disabled={saving} onClick={book}>Confirm booking</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

@@ -6,12 +6,13 @@ import {
   useRouter,
   HeadContent,
   Scripts,
+  type ErrorComponentProps,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
-import { AppProvider } from "@/lib/store";
+import { AppProvider, useApp } from "@/lib/store";
 import { Toaster } from "@/components/ui/sonner";
 
 function NotFoundComponent() {
@@ -36,11 +37,11 @@ function NotFoundComponent() {
   );
 }
 
-function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
+function ErrorComponent({ error, reset }: ErrorComponentProps) {
   console.error(error);
   const router = useRouter();
   useEffect(() => {
-    reportLovableError(error, { boundary: "tanstack_root_error_component" });
+    reportLovableError(error instanceof Error ? error : new Error(String(error)), { boundary: "tanstack_root_error_component" });
   }, [error]);
 
   return (
@@ -136,9 +137,15 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <AppProvider>
         {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-        <Outlet />
+        <SessionContent />
         <Toaster position="top-right" richColors />
       </AppProvider>
     </QueryClientProvider>
   );
+}
+
+function SessionContent() {
+  const { loading, auth } = useApp();
+  if (loading) return <div role="status" className="flex min-h-screen items-center justify-center bg-background text-muted-foreground">Loading Jeeva…</div>;
+  return <Outlet key={auth.signedIn ? auth.email : "guest"} />;
 }
