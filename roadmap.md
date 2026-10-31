@@ -3,3 +3,4 @@
 - [ ] Connect real email accounts, profiles, metrics, assessments, bookings, notifications and reports.
 - [ ] Keep guest demo isolated from signed-in health records.
 - [ ] Verify persistence, ownership policies and account flows.
+- [ ] Fix pages showing HTML without working interactive controls.
