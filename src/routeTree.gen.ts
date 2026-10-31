@@ -18,6 +18,7 @@ import { Route as DoctorsRouteImport } from './routes/doctors'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as ReportsRouteImport } from './routes/reports'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as TrackerRouteImport } from './routes/tracker'
 import { Route as RiskIndexRouteImport } from './routes/risk.index'
@@ -69,6 +70,11 @@ const ReportsRoute = ReportsRouteImport.update({
   path: '/reports',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -105,6 +111,7 @@ export interface FileRoutesByFullPath {
   '/notifications': typeof NotificationsRoute
   '/profile': typeof ProfileRoute
   '/reports': typeof ReportsRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/settings': typeof SettingsRoute
   '/tracker': typeof TrackerRoute
   '/risk/diabetes': typeof RiskDiabetesRoute
@@ -121,6 +128,7 @@ export interface FileRoutesByTo {
   '/notifications': typeof NotificationsRoute
   '/profile': typeof ProfileRoute
   '/reports': typeof ReportsRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/settings': typeof SettingsRoute
   '/tracker': typeof TrackerRoute
   '/risk/diabetes': typeof RiskDiabetesRoute
@@ -138,6 +146,7 @@ export interface FileRoutesById {
   '/notifications': typeof NotificationsRoute
   '/profile': typeof ProfileRoute
   '/reports': typeof ReportsRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/settings': typeof SettingsRoute
   '/tracker': typeof TrackerRoute
   '/risk/diabetes': typeof RiskDiabetesRoute
@@ -156,6 +165,7 @@ export interface FileRouteTypes {
     | '/notifications'
     | '/profile'
     | '/reports'
+    | '/reset-password'
     | '/settings'
     | '/tracker'
     | '/risk/diabetes'
@@ -172,6 +182,7 @@ export interface FileRouteTypes {
     | '/notifications'
     | '/profile'
     | '/reports'
+    | '/reset-password'
     | '/settings'
     | '/tracker'
     | '/risk/diabetes'
@@ -188,6 +199,7 @@ export interface FileRouteTypes {
     | '/notifications'
     | '/profile'
     | '/reports'
+    | '/reset-password'
     | '/settings'
     | '/tracker'
     | '/risk/diabetes'
@@ -205,6 +217,7 @@ export interface RootRouteChildren {
   NotificationsRoute: typeof NotificationsRoute
   ProfileRoute: typeof ProfileRoute
   ReportsRoute: typeof ReportsRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   SettingsRoute: typeof SettingsRoute
   TrackerRoute: typeof TrackerRoute
   RiskDiabetesRoute: typeof RiskDiabetesRoute
@@ -277,6 +290,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ReportsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/settings': {
       id: '/settings'
       path: '/settings'
@@ -325,6 +345,7 @@ const rootRouteChildren: RootRouteChildren = {
   NotificationsRoute: NotificationsRoute,
   ProfileRoute: ProfileRoute,
   ReportsRoute: ReportsRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   SettingsRoute: SettingsRoute,
   TrackerRoute: TrackerRoute,
   RiskDiabetesRoute: RiskDiabetesRoute,
