@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,8 @@ import type { Settings } from "@/lib/types";
 export const Route = createFileRoute("/settings")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Settings — Jeeva" },
       { name: "description", content: "Choose measurement units, notification preferences, theme and manage your account." },
       { property: "og:title", content: "Settings — Jeeva" },
@@ -28,8 +30,7 @@ const notifLabels: Record<keyof Settings["notifications"], string> = {
 };
 
 function SettingsPage() {
-  const { settings, update, reset, auth } = useApp();
-  const navigate = useNavigate();
+  const { settings, update, reset, auth, signOut } = useApp();
 
   return (
     <AppShell title="Settings" description="Preferences, notifications and account.">
@@ -80,15 +81,13 @@ function SettingsPage() {
         <div className="flex flex-wrap gap-3">
           <Button
             variant="outline"
-            onClick={() => {
-              update({ auth: { signedIn: false, guest: false, name: "", email: "" } });
-              toast.success("Signed out");
-              navigate({ to: "/auth" });
+            onClick={async () => {
+              await signOut();
             }}
           >
             Sign out
           </Button>
-          <Button
+          {!auth.signedIn && <Button
             variant="destructive"
             onClick={() => {
               reset();
@@ -96,7 +95,7 @@ function SettingsPage() {
             }}
           >
             Reset demo data
-          </Button>
+          </Button>}
         </div>
       </div>
     </AppShell>

@@ -11,6 +11,8 @@ import type { Appointment } from "@/lib/types";
 export const Route = createFileRoute("/appointments")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Appointments — Jeeva" },
       { name: "description", content: "Manage upcoming, past and cancelled doctor appointments in one place." },
       { property: "og:title", content: "Appointments — Jeeva" },
@@ -45,8 +47,8 @@ function Appointments() {
   const { appointments, update } = useApp();
   const by = (s: Appointment["status"]) => appointments.filter((a) => a.status === s);
 
-  const cancel = (id: string) => {
-    update({ appointments: appointments.map((a) => (a.id === id ? { ...a, status: "cancelled" } : a)) });
+  const cancel = async (id: string) => {
+    if (!await update({ appointments: appointments.map((a) => (a.id === id ? { ...a, status: "cancelled" } : a)) })) return;
     toast.success("Appointment cancelled");
   };
 

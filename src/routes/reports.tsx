@@ -1,16 +1,19 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { Printer } from "lucide-react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { Printer, Save } from "lucide-react";
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { AppShell } from "@/components/AppShell";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Disclaimer } from "@/components/Disclaimer";
+import { toast } from "sonner";
 import { useApp } from "@/lib/store";
 import { bmiCategory, bmiFrom } from "@/services/mlService";
 
 export const Route = createFileRoute("/reports")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Health report — Jeeva" },
       { name: "description", content: "A consolidated, printable health summary with vitals, risk results and trend charts." },
       { property: "og:title", content: "Health report — Jeeva" },
@@ -21,20 +24,20 @@ export const Route = createFileRoute("/reports")({
 });
 
 function Reports() {
-  const { profile, vitals, risks, appointments } = useApp();
-  const latest = vitals[vitals.length - 1]!;
-  const bmi = bmiFrom(profile.heightCm, latest.weightKg);
+  const { profile, vitals, risks, appointments, saveReport, reports, auth, saving } = useApp();
+  const latest = vitals[vitals.length - 1];
+  const bmi = bmiFrom(profile.heightCm, (latest?.weightKg ?? profile.weightKg));
   const trend = vitals.slice(-60).map((v) => ({ ...v, label: new Date(v.date).toLocaleDateString(undefined, { month: "short", day: "numeric" }) }));
 
   const rows: [string, string][] = [
     ["Name", profile.name],
     ["Age / Gender", `${profile.age} · ${profile.gender}`],
     ["Blood group", profile.bloodGroup],
-    ["Height / Weight", `${profile.heightCm} cm · ${latest.weightKg} kg`],
+    ["Height / Weight", `${profile.heightCm} cm · ${(latest?.weightKg ?? profile.weightKg)} kg`],
     ["BMI", `${bmi.toFixed(1)} (${bmiCategory(bmi).label})`],
-    ["Blood pressure", `${latest.systolic}/${latest.diastolic} mmHg`],
-    ["Resting heart rate", `${latest.heartRate} bpm`],
-    ["Fasting glucose", `${latest.glucose} mg/dL`],
+    ["Blood pressure", `${(latest?.systolic ?? profile.systolic)}/${(latest?.diastolic ?? profile.diastolic)} mmHg`],
+    ["Resting heart rate", `${(latest?.heartRate ?? profile.restingHeartRate)} bpm`],
+    ["Fasting glucose", `${(latest?.glucose ?? profile.fastingGlucose)} mg/dL`],
     ["HbA1c", `${profile.hba1c}%`],
     ["Cholesterol", `${profile.cholesterol} mg/dL`],
     ["Medical history", profile.medicalHistory || "—"],
@@ -42,14 +45,19 @@ function Reports() {
     ["Emergency contact", profile.emergencyContact || "—"],
   ];
 
+  if (!latest && !profile.heightCm) return <AppShell title="Health report"><p>No health records yet.</p><Button asChild><Link to="/profile">Complete health profile</Link></Button></AppShell>;
+
   return (
     <AppShell
       title="Health report"
       description={`Generated ${new Date().toLocaleDateString()}`}
       actions={
+        <>
+        {auth.signedIn && <Button size="sm" disabled={saving} variant="outline" onClick={async () => { if (await saveReport()) toast.success("Report saved"); }}><Save className="size-4" /> Save report</Button>}
         <Button size="sm" onClick={() => window.print()}>
           <Printer className="size-4" /> Print / save PDF
         </Button>
+        </>
       }
     >
       <div className="card-soft p-6">
@@ -116,6 +124,7 @@ function Reports() {
         </ul>
       </div>
 
+      {reports.length > 0 && <section><h2 className="text-base font-semibold">Saved reports</h2><ul>{reports.map(r => <li key={r.id} className="flex justify-between border-b border-border py-3 text-sm"><span>{r.title}</span><span>{new Date(r.created_at).toLocaleDateString()}</span></li>)}</ul></section>}
       <Disclaimer />
     </AppShell>
   );

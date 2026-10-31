@@ -8,6 +8,8 @@ import { useApp } from "@/lib/store";
 export const Route = createFileRoute("/notifications")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Notifications — Jeeva" },
       { name: "description", content: "Reminders for logging vitals, hydration, upcoming appointments and wellness check-ins." },
       { property: "og:title", content: "Notifications — Jeeva" },

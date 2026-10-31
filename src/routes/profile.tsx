@@ -16,6 +16,8 @@ import { bmiCategory, bmiFrom } from "@/services/mlService";
 export const Route = createFileRoute("/profile")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Health profile — Jeeva" },
       { name: "description", content: "Edit your age, vitals, lifestyle habits, medical history and allergies; BMI and health tier update automatically." },
       { property: "og:title", content: "Health profile — Jeeva" },
@@ -42,7 +44,7 @@ function healthTier(bmi: number, p: HealthProfile) {
 }
 
 function ProfilePage() {
-  const { profile, update } = useApp();
+  const { profile, update, saving } = useApp();
   const [form, setForm] = React.useState<HealthProfile>(profile);
   const [errors, setErrors] = React.useState<Record<string, string>>({});
 
@@ -53,7 +55,7 @@ function ProfilePage() {
   const set = <K extends keyof HealthProfile>(k: K, v: HealthProfile[K]) => setForm((f) => ({ ...f, [k]: v }));
   const num = (v: string) => (v === "" ? 0 : Number(v));
 
-  const save = (e: React.FormEvent) => {
+  const save = async (e: React.FormEvent) => {
     e.preventDefault();
     const next: Record<string, string> = {};
     if (form.age < 1 || form.age > 120) next["age"] = "Enter an age between 1 and 120";
@@ -66,7 +68,7 @@ function ProfilePage() {
       toast.error("Please fix the highlighted fields");
       return;
     }
-    update({ profile: form });
+    if (!await update({ profile: form })) return;
     toast.success("Health profile saved");
   };
 
@@ -192,7 +194,7 @@ function ProfilePage() {
         </section>
 
         <div className="flex gap-3">
-          <Button type="submit">Save profile</Button>
+          <Button disabled={saving} type="submit">Save profile</Button>
           <Button type="button" variant="outline" onClick={() => setForm(profile)}>Reset changes</Button>
         </div>
       </form>

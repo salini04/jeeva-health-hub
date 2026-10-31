@@ -11,6 +11,8 @@ import { bmiFrom } from "@/services/mlService";
 export const Route = createFileRoute("/assistant")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Jeeva Assistant — Jeeva" },
       { name: "description", content: "Chat with Jeeva Assistant, a health educator that explains vitals, habits and risk scores in plain language." },
       { property: "og:title", content: "Jeeva Assistant — Jeeva" },
@@ -31,9 +33,9 @@ const starters = [
 function answer(q: string, ctx: { bmi: number; systolic: number; diastolic: number; heart?: number | undefined }): string {
   const t = q.toLowerCase();
   if (t.includes("bmi"))
-    return `Your BMI is about **${ctx.bmi.toFixed(1)}**. BMI compares weight to height: under 18.5 is underweight, 18.5-24.9 healthy, 25-29.9 overweight and 30+ obese. It's a rough screening number — it can't tell muscle from fat, so read it alongside waist size and activity.`;
+    return ctx.bmi <= 0 ? "Add your height and weight in your health profile to calculate BMI." : `Your BMI is about **${ctx.bmi.toFixed(1)}**. BMI compares weight to height: under 18.5 is underweight, 18.5-24.9 healthy, 25-29.9 overweight and 30+ obese. It's a rough screening number — it can't tell muscle from fat, so read it alongside waist size and activity.`;
   if (t.includes("blood pressure") || t.includes("bp"))
-    return `Your latest reading is **${ctx.systolic}/${ctx.diastolic} mmHg** (optimal is around 120/80). Habits that help: lower salt, 30 minutes of movement most days, limit alcohol, sleep 7-8 hours and manage stress. Persistent readings above 140/90 should be reviewed by a doctor.`;
+    return ctx.systolic <= 0 ? "Log a blood pressure reading first. A clinician can help interpret it." : `Your latest reading is **${ctx.systolic}/${ctx.diastolic} mmHg** (optimal is around 120/80). Habits that help: lower salt, 30 minutes of movement most days, limit alcohol, sleep 7-8 hours and manage stress. Persistent readings above 140/90 should be reviewed by a doctor.`;
   if (t.includes("risk") && t.includes("heart"))
     return ctx.heart !== undefined
       ? `Your latest heart screening estimated **${ctx.heart}%**. That number reflects your age, blood pressure, cholesterol, BMI and habits. The good news: blood pressure, weight, smoking and activity are all modifiable — small consistent changes move the score.`
@@ -55,7 +57,7 @@ function Assistant() {
   const [typing, setTyping] = React.useState(false);
   const endRef = React.useRef<HTMLDivElement>(null);
   const inputRef = React.useRef<HTMLTextAreaElement>(null);
-  const latest = vitals[vitals.length - 1]!;
+  const latest = vitals[vitals.length - 1];
 
   React.useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -63,7 +65,7 @@ function Assistant() {
 
   const send = (text: string) => {
     const content = text.trim();
-    if (!content) return;
+    if (!content || typing) return;
     const userMsg = { id: uid(), role: "user" as const, content, createdAt: new Date().toISOString() };
     update({ chat: [...chat, userMsg] });
     setInput("");
@@ -73,9 +75,9 @@ function Assistant() {
         id: uid(),
         role: "assistant" as const,
         content: answer(content, {
-          bmi: bmiFrom(profile.heightCm, latest.weightKg),
-          systolic: latest.systolic,
-          diastolic: latest.diastolic,
+          bmi: bmiFrom(profile.heightCm, (latest?.weightKg ?? profile.weightKg)),
+          systolic: (latest?.systolic ?? profile.systolic),
+          diastolic: (latest?.diastolic ?? profile.diastolic),
           heart: risks.heart?.score,
         }),
         createdAt: new Date().toISOString(),
