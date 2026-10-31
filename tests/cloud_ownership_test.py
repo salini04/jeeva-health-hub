@@ -18,7 +18,7 @@ class CloudOwnership(unittest.TestCase):
  @classmethod
  def tearDownClass(cls):
   for user in cls.users:requests.delete(cls.url+'/auth/v1/admin/users/'+user['id'],headers=cls.admin).raise_for_status()
- def test_profile_trigger(self):
+ def test_00_profile_trigger(self):
   u=self.users[0];r=requests.get(self.url+'/rest/v1/profiles',headers=u['headers']);r.raise_for_status();self.assertEqual(r.json()[0]['user_id'],u['id']);self.assertEqual(r.json()[0]['full_name'],'Jeeva Test 0')
  def test_owner_only_profiles(self):
   a,b=self.users;r=requests.get(self.url+'/rest/v1/profiles?user_id=eq.'+a['id'],headers=b['headers']);self.assertEqual(r.json(),[])
@@ -34,7 +34,8 @@ class CloudOwnership(unittest.TestCase):
     r=requests.post(self.url+'/rest/v1/'+table,headers=b['headers'],json={'user_id':a['id'],**values});self.assertGreaterEqual(r.status_code,400)
  def test_public_doctors_read_only(self):
   h={'apikey':self.key};r=requests.get(self.url+'/rest/v1/doctors',headers=h);r.raise_for_status();self.assertEqual(len(r.json()),6)
-  r=requests.patch(self.url+'/rest/v1/doctors?id=eq.00000000-0000-4000-8000-000000000001',headers=self.users[0]['headers'],json={'consultation_fee':0});self.assertGreaterEqual(r.status_code,400)
+  r=requests.patch(self.url+'/rest/v1/doctors?id=eq.00000000-0000-4000-8000-000000000001',headers={**self.users[0]['headers'],'Prefer':'return=representation'},json={'consultation_fee':0});self.assertTrue(r.status_code >= 400 or r.json() == [])
+  r=requests.get(self.url+'/rest/v1/doctors?id=eq.00000000-0000-4000-8000-000000000001',headers=h);self.assertEqual(r.json()[0]['consultation_fee'],800)
  def test_browser_persistence(self):
   u=self.users[0]
   with sync_playwright() as p:

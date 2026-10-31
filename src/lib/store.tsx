@@ -25,7 +25,7 @@ export function AppProvider({children}:{children:React.ReactNode}) {
  const hydrate=React.useCallback(async(user:User|null)=>{
   const version=++generation.current; userRef.current=user; ready.current=false; setLoadError(''); setLoading(true);
   if(!user){setState({...guestState.current,auth:{...defaultState.auth,guest:guestState.current.auth.guest}}); ready.current=true; setLoading(false); return;}
-  setState({...defaultState,profile:{...emptyProfile,name:user.user_metadata['full_name'] ?? '',email:user.email ?? ''},vitals:[],appointments:[],notifications:[],chat:[],risks:{},reports:[],auth:{signedIn:true,guest:false,name:user.user_metadata['full_name'] ?? '',email:user.email ?? ''}});
+  setState(s=>({...defaultState,doctors:s.doctors,profile:{...emptyProfile,name:user.user_metadata['full_name'] ?? '',email:user.email ?? ''},vitals:[],appointments:[],notifications:[],chat:[],risks:{},reports:[],auth:{signedIn:true,guest:false,name:user.user_metadata['full_name'] ?? '',email:user.email ?? ''}}));
   try { const data=await queryClient.fetchQuery({queryKey:['health',user.id],queryFn:()=>loadHealthData(user.id),staleTime:0});
    if(version!==generation.current)return;
    const prefs=data.preferences as Partial<Settings>;
